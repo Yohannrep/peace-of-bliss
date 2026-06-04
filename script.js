@@ -240,6 +240,7 @@ function renderProducts() {
     const haystack = [product.name, product.mood, product.description, ...product.notes].join(" ").toLowerCase();
     const moodMatch = state.activeMood === "all" || product.mood === state.activeMood;
     const searchMatch = !term || haystack.includes(term);
+    const isKit = product.id === "bliss-box";
     return `
       <article class="product-card${moodMatch && searchMatch ? "" : " hidden"}" data-id="${product.id}">
         <div class="product-art" style="--accent:${product.color}">
@@ -249,10 +250,11 @@ function renderProducts() {
           <div class="product-meta"><span>${product.size}</span><span>${product.mood}</span></div>
           <h3>${product.name}</h3>
           <p>${product.description}</p>
+          ${isKit ? `<p class="custom-note">Opens a preference form for likes, dislikes, allergies, and basket notes before adding to cart.</p>` : ""}
           <ul class="scent-list">${product.notes.map((note) => `<li>${note}</li>`).join("")}</ul>
           <div class="product-footer">
             <strong class="price">${money(product.price)}</strong>
-            <button class="product-button" type="button" data-add="${product.id}">Add to cart</button>
+            <button class="product-button" type="button" data-add="${product.id}">${isKit ? "Customize kit" : "Add to cart"}</button>
           </div>
         </div>
       </article>

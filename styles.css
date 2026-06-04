@@ -253,6 +253,15 @@ h3 { font-size: 1.35rem; }
 .product-body { display: flex; flex: 1; flex-direction: column; padding: 1rem; }
 .product-meta { display: flex; justify-content: space-between; gap: .75rem; margin-bottom: .6rem; color: var(--muted); font-weight: 850; }
 .product-body p { color: var(--muted); line-height: 1.5; }
+.custom-note {
+  margin: 0 0 .8rem;
+  padding: .7rem .8rem;
+  border: 1px solid rgba(38,155,144,.34);
+  border-radius: .5rem;
+  background: rgba(38,155,144,.1);
+  color: #17675f !important;
+  font-weight: 850;
+}
 .scent-list { display: flex; flex-wrap: wrap; gap: .45rem; padding: 0; margin: 0 0 auto; list-style: none; }
 .scent-list li { padding: .45rem .55rem; border-radius: 999px; background: var(--cream); font-size: .85rem; font-weight: 850; }
 .product-footer { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: .75rem; margin-top: 1rem; }
