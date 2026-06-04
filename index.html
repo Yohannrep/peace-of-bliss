@@ -114,11 +114,12 @@
           <label>First name<input name="firstName" autocomplete="given-name" required></label>
           <label>Last name<input name="lastName" autocomplete="family-name" required></label>
           <label>Email<input name="email" type="email" autocomplete="email" required></label>
-          <label>Phone<input name="phone" type="tel" autocomplete="tel" required></label>
+          <label>Phone<input name="phone" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" autocomplete="tel" placeholder="10 digits" required></label>
           <label class="wide">Address<input name="address" autocomplete="street-address" required></label>
           <label>City<input name="city" autocomplete="address-level2" required></label>
-          <label>State<input name="state" autocomplete="address-level1" required></label>
-          <label>ZIP<input name="zip" autocomplete="postal-code" required></label>
+          <label>State<input name="state" autocomplete="address-level1" maxlength="2" placeholder="AZ" required></label>
+          <label>ZIP<input name="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code" placeholder="5 digits" required></label>
+          <p class="address-status wide" id="addressStatus">ZIP, city, and state will be verified before checkout.</p>
           <label>Delivery
             <select name="delivery" id="deliverySelect">
               <option value="shipping">Shipping - $7.95</option>
@@ -126,7 +127,16 @@
             </select>
           </label>
           <label class="wide">Gift note<textarea name="giftNote" rows="3" placeholder="Optional note for the box"></textarea></label>
-          <label class="check wide"><input name="giftWrap" type="checkbox"> Add gift wrap for $4.00</label>
+          <label class="wide">Gift wrap style
+            <select name="giftWrap" id="giftWrapSelect">
+              <option value="none">No gift wrap</option>
+              <option value="classic">Classic kraft wrap - $4.00</option>
+              <option value="blush">Blush ribbon wrap - $5.50</option>
+              <option value="holiday">Holiday wrap - $6.00</option>
+              <option value="luxury">Luxury keepsake box - $9.00</option>
+            </select>
+          </label>
+          <label class="wide">Basket preferences<textarea name="basketPrefs" rows="3" placeholder="Example: neutral colors, no glitter, cozy scents, birthday gift, avoid strong perfume."></textarea></label>
         </div>
         <button class="button primary wide-button" type="submit">Place demo order</button>
       </form>
@@ -149,6 +159,41 @@
   </aside>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal" id="kitModal" aria-hidden="true">
+    <div class="modal-card kit-modal-card">
+      <button class="icon-button modal-close" id="closeKitModal" type="button" aria-label="Close kit customizer">x</button>
+      <p class="eyebrow">Discovery Box customizer</p>
+      <h2>Build the Box</h2>
+      <p class="modal-intro">Tell us what to include, avoid, or swap so the kit feels made for the person opening it.</p>
+      <form id="kitForm" class="kit-form">
+        <fieldset>
+          <legend>Scent preferences</legend>
+          <div class="option-grid">
+            <label><input type="checkbox" name="likes" value="Cozy vanilla"> Cozy vanilla</label>
+            <label><input type="checkbox" name="likes" value="Fresh citrus"> Fresh citrus</label>
+            <label><input type="checkbox" name="likes" value="Clean spa"> Clean spa</label>
+            <label><input type="checkbox" name="likes" value="Fruity tropical"> Fruity tropical</label>
+            <label><input type="checkbox" name="likes" value="Warm amber"> Warm amber</label>
+            <label><input type="checkbox" name="likes" value="Soft floral"> Soft floral</label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Do not include</legend>
+          <div class="option-grid">
+            <label><input type="checkbox" name="avoid" value="Strong florals"> Strong florals</label>
+            <label><input type="checkbox" name="avoid" value="Smoke"> Smoke</label>
+            <label><input type="checkbox" name="avoid" value="Whiskey notes"> Whiskey notes</label>
+            <label><input type="checkbox" name="avoid" value="Coconut"> Coconut</label>
+            <label><input type="checkbox" name="avoid" value="Citrus"> Citrus</label>
+            <label><input type="checkbox" name="avoid" value="Vanilla"> Vanilla</label>
+          </div>
+        </fieldset>
+        <label>Allergies or sensitivities<textarea name="allergies" rows="3" placeholder="Example: sensitive to cinnamon, lavender, strong perfume, smoke notes."></textarea></label>
+        <label>Extra notes<textarea name="notes" rows="3" placeholder="Example: make it calm, no pink, for a teacher gift, add a handwritten cozy vibe."></textarea></label>
+        <button class="button primary" type="submit">Add customized kit</button>
+      </form>
+    </div>
+  </div>
   <div class="modal" id="orderModal" aria-hidden="true">
     <div class="modal-card">
       <button class="icon-button modal-close" id="closeModal" type="button" aria-label="Close confirmation">x</button>

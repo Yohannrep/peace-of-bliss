@@ -328,6 +328,31 @@ h3 { font-size: 1.35rem; }
 .checkout-form .check { display: flex; align-items: center; gap: .6rem; }
 .checkout-form .check input { width: auto; }
 .wide-button { width: 100%; margin-top: 1rem; }
+.address-status {
+  margin: 0;
+  padding: .8rem .95rem;
+  border: 1px solid var(--line);
+  border-radius: .5rem;
+  background: rgba(255,255,255,.68);
+  color: var(--muted);
+  font-weight: 850;
+  line-height: 1.4;
+}
+.address-status.valid {
+  border-color: rgba(38,155,144,.45);
+  background: rgba(38,155,144,.12);
+  color: #17675f;
+}
+.address-status.invalid {
+  border-color: rgba(200,101,68,.5);
+  background: rgba(200,101,68,.13);
+  color: #8f3f28;
+}
+.address-status.checking {
+  border-color: rgba(229,165,58,.55);
+  background: rgba(229,165,58,.15);
+  color: #765115;
+}
 
 .cart-drawer {
   position: fixed;
@@ -374,6 +399,14 @@ h3 { font-size: 1.35rem; }
 }
 .cart-item strong { display: block; }
 .cart-item span { color: var(--muted); font-size: .9rem; }
+.cart-item em {
+  display: block;
+  margin-top: .45rem;
+  color: var(--clay);
+  font-size: .82rem;
+  font-style: normal;
+  line-height: 1.35;
+}
 .qty {
   display: flex;
   align-items: center;
@@ -439,6 +472,58 @@ h3 { font-size: 1.35rem; }
   box-shadow: var(--shadow);
 }
 .modal-close { position: absolute; top: 1rem; right: 1rem; }
+.modal-intro {
+  max-width: 34rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.kit-modal-card {
+  width: min(46rem, 96vw);
+  max-height: min(48rem, 92vh);
+  overflow: auto;
+}
+.kit-form {
+  display: grid;
+  gap: 1rem;
+}
+.kit-form fieldset {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: .5rem;
+  background: rgba(255,255,255,.58);
+}
+.kit-form legend,
+.kit-form label {
+  font-weight: 900;
+}
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .6rem;
+  margin-top: .7rem;
+}
+.option-grid label,
+.kit-form > label {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .65rem;
+  border: 1px solid var(--line);
+  border-radius: .5rem;
+  background: white;
+}
+.kit-form > label {
+  display: grid;
+  align-items: stretch;
+}
+.kit-form textarea {
+  width: 100%;
+  padding: .85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: .5rem;
+  resize: vertical;
+}
 .hidden { display: none; }
 
 @keyframes flicker {
@@ -582,6 +667,12 @@ h3 { font-size: 1.35rem; }
   .promo button { min-height: 2.7rem; }
   .modal-card {
     padding: 1.35rem;
+  }
+  .kit-modal-card {
+    max-height: 94vh;
+  }
+  .option-grid {
+    grid-template-columns: 1fr;
   }
 }
 
