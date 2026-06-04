@@ -76,6 +76,12 @@ const cartCount = document.getElementById("cartCount");
 const totals = document.getElementById("totals");
 const promoInput = document.getElementById("promoInput");
 const toast = document.getElementById("toast");
+const openAccountButton = document.getElementById("openAccount");
+const accountDashboard = document.getElementById("accountDashboard");
+const accountModal = document.getElementById("accountModal");
+const accountForm = document.getElementById("accountForm");
+const accountModalTitle = document.getElementById("accountModalTitle");
+const accountSubmit = document.getElementById("accountSubmit");
 const quizOptions = document.getElementById("quizOptions");
 const quizResult = document.getElementById("quizResult");
 const checkoutForm = document.getElementById("checkoutForm");
@@ -118,6 +124,7 @@ const stateNames = {
 };
 
 const zipCache = new Map();
+let accountMode = "signin";
 
 function money(value) {
   return `$${value.toFixed(2)}`;
@@ -126,6 +133,115 @@ function money(value) {
 function saveCart() {
   localStorage.setItem("pobCustomerCart", JSON.stringify(state.cart));
   localStorage.setItem("pobPromo", state.promo);
+}
+
+function getAccounts() {
+  return JSON.parse(localStorage.getItem("pobAccounts") || "{}");
+}
+
+function saveAccounts(accounts) {
+  localStorage.setItem("pobAccounts", JSON.stringify(accounts));
+}
+
+function getCurrentEmail() {
+  return localStorage.getItem("pobCurrentAccount") || "";
+}
+
+function setCurrentEmail(email) {
+  if (email) localStorage.setItem("pobCurrentAccount", email);
+  else localStorage.removeItem("pobCurrentAccount");
+}
+
+function currentAccount() {
+  const email = getCurrentEmail();
+  return email ? getAccounts()[email] : null;
+}
+
+function trackingSteps(order) {
+  if (order.delivery === "pickup") {
+    return ["Order received", "Being prepared", "Ready for pickup"];
+  }
+  return ["Order received", "Poured and packed", "Label created", "In transit", "Out for delivery", "Delivered"];
+}
+
+function trackingIndex(order) {
+  const ageHours = Math.max(0, (Date.now() - order.createdAt) / 36e5);
+  return Math.min(trackingSteps(order).length - 1, Math.floor(ageHours / 12));
+}
+
+function orderTotalFromCart(delivery, giftWrapKey) {
+  const base = subtotal();
+  const discount = discountAmount(base);
+  const shipping = delivery === "pickup" || base === 0 ? 0 : base >= 65 ? 0 : 7.95;
+  const giftWrap = giftWrapPrices[giftWrapKey] || 0;
+  const tax = (base - discount + shipping + giftWrap) * 0.082;
+  return base - discount + shipping + giftWrap + tax;
+}
+
+function orderItemsSnapshot() {
+  return state.cart.map((item) => {
+    const product = getProduct(item.id);
+    return {
+      name: product.name,
+      qty: item.qty,
+      price: product.price,
+      details: describeKit(item.config)
+    };
+  });
+}
+
+function renderAccountDashboard() {
+  const account = currentAccount();
+  openAccountButton.textContent = account ? "Account" : "Sign in";
+  if (!account) {
+    accountDashboard.innerHTML = `
+      <div class="account-empty">
+        <h3>Save your orders</h3>
+        <p>Create an account or sign in before checkout to save order history and package tracking.</p>
+        <button class="button primary" type="button" data-open-account>Create account / sign in</button>
+      </div>
+    `;
+    return;
+  }
+
+  const orders = account.orders || [];
+  accountDashboard.innerHTML = `
+    <div class="account-welcome">
+      <div><h3>Hi, ${account.name}</h3><p>${account.email}</p></div>
+      <button class="button secondary" type="button" data-sign-out>Sign out</button>
+    </div>
+    <div class="order-list">
+      ${orders.length ? orders.map(renderOrderCard).join("") : `<div class="account-empty"><h3>No orders yet</h3><p>Your checkout history will appear here after you place an order while signed in.</p></div>`}
+    </div>
+  `;
+}
+
+function renderOrderCard(order) {
+  const steps = trackingSteps(order);
+  const active = trackingIndex(order);
+  return `
+    <article class="order-card">
+      <div class="order-head">
+        <div><strong>${order.id}</strong><span>${new Date(order.createdAt).toLocaleDateString()}</span></div>
+        <div><strong>${order.tracking}</strong><span>${order.delivery === "pickup" ? "Pickup code" : "Tracking number"}</span></div>
+      </div>
+      <ul class="order-items">${order.items.map((item) => `<li>${item.qty}x ${item.name}${item.details ? `<em>${item.details}</em>` : ""}</li>`).join("")}</ul>
+      <div class="tracking-bar">${steps.map((step, index) => `<span class="${index <= active ? "done" : ""}">${step}</span>`).join("")}</div>
+      <p>${steps[active]}${order.delivery === "pickup" ? "." : " for shipment."} Total: ${money(order.total)}</p>
+    </article>
+  `;
+}
+
+function saveOrderToAccount(order) {
+  const email = getCurrentEmail();
+  if (!email) return false;
+  const accounts = getAccounts();
+  if (!accounts[email]) return false;
+  accounts[email].orders = accounts[email].orders || [];
+  accounts[email].orders.unshift(order);
+  saveAccounts(accounts);
+  renderAccountDashboard();
+  return true;
 }
 
 function getProduct(id) {
@@ -137,6 +253,64 @@ function showToast(message) {
   toast.classList.add("show");
   window.clearTimeout(showToast.timer);
   showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+}
+
+function openAccountModal(mode = "signin") {
+  accountMode = mode;
+  accountModal.classList.add("open");
+  accountModal.setAttribute("aria-hidden", "false");
+  accountForm.reset();
+  renderAccountMode();
+}
+
+function closeAccountModal() {
+  accountModal.classList.remove("open");
+  accountModal.setAttribute("aria-hidden", "true");
+}
+
+function renderAccountMode() {
+  accountModalTitle.textContent = accountMode === "signup" ? "Create account" : "Sign in";
+  accountSubmit.textContent = accountMode === "signup" ? "Create account" : "Sign in";
+  accountForm.name.parentElement.classList.toggle("hidden", accountMode !== "signup");
+  document.querySelectorAll("[data-account-mode]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.accountMode === accountMode);
+  });
+}
+
+function handleAccountSubmit(event) {
+  event.preventDefault();
+  const data = new FormData(accountForm);
+  const email = data.get("email").trim().toLowerCase();
+  const password = data.get("password");
+  const accounts = getAccounts();
+
+  if (accountMode === "signup") {
+    if (accounts[email]) {
+      showToast("That account already exists. Try signing in.");
+      return;
+    }
+    accounts[email] = {
+      name: data.get("name").trim() || email.split("@")[0],
+      email,
+      password,
+      orders: []
+    };
+    saveAccounts(accounts);
+    setCurrentEmail(email);
+    closeAccountModal();
+    renderAccountDashboard();
+    showToast("Account created");
+    return;
+  }
+
+  if (!accounts[email] || accounts[email].password !== password) {
+    showToast("Email or password does not match");
+    return;
+  }
+  setCurrentEmail(email);
+  closeAccountModal();
+  renderAccountDashboard();
+  showToast("Signed in");
 }
 
 function onlyDigits(value, limit) {
@@ -250,7 +424,6 @@ function renderProducts() {
           <div class="product-meta"><span>${product.size}</span><span>${product.mood}</span></div>
           <h3>${product.name}</h3>
           <p>${product.description}</p>
-          ${isKit ? `<p class="custom-note">Opens a preference form for likes, dislikes, allergies, and basket notes before adding to cart.</p>` : ""}
           <ul class="scent-list">${product.notes.map((note) => `<li>${note}</li>`).join("")}</ul>
           <div class="product-footer">
             <strong class="price">${money(product.price)}</strong>
@@ -289,7 +462,6 @@ function describeKit(config) {
   if (config.likes.length) lines.push(`Likes: ${config.likes.join(", ")}`);
   if (config.avoid.length) lines.push(`Avoid: ${config.avoid.join(", ")}`);
   if (config.allergies) lines.push(`Allergies: ${config.allergies}`);
-  if (config.notes) lines.push(`Notes: ${config.notes}`);
   return lines.join(" | ");
 }
 
@@ -404,7 +576,18 @@ async function placeOrder(event) {
   const name = data.get("firstName");
   const wrap = giftWrapNames[giftWrapSelect.value] || "No gift wrap";
   const basketPrefs = data.get("basketPrefs") ? ` Basket preferences saved: ${data.get("basketPrefs")}` : "";
-  orderMessage.textContent = `${name}, your demo order ${orderId} is confirmed with ${wrap}.${basketPrefs} A real shop would send payment and fulfillment details here.`;
+  const order = {
+    id: orderId,
+    tracking: `${deliverySelect.value === "pickup" ? "PICKUP" : "POB"}-${Math.floor(1000000 + Math.random() * 9000000)}`,
+    createdAt: Date.now(),
+    delivery: deliverySelect.value,
+    total: orderTotalFromCart(deliverySelect.value, giftWrapSelect.value),
+    items: orderItemsSnapshot(),
+    giftWrap: wrap,
+    basketPrefs: data.get("basketPrefs") || ""
+  };
+  const saved = saveOrderToAccount(order);
+  orderMessage.textContent = `${name}, your demo order ${orderId} is confirmed with ${wrap}.${basketPrefs} ${saved ? `Tracking ${order.tracking} is saved in your account.` : "Sign in before checkout next time to save history and tracking."}`;
   state.cart = [];
   saveCart();
   renderCart();
@@ -416,6 +599,26 @@ async function placeOrder(event) {
 productGrid.addEventListener("click", (event) => {
   const button = event.target.closest("[data-add]");
   if (button) addToCart(button.dataset.add);
+});
+openAccountButton.addEventListener("click", () => openAccountModal(currentAccount() ? "signin" : "signup"));
+document.getElementById("closeAccountModal").addEventListener("click", closeAccountModal);
+accountModal.addEventListener("click", (event) => {
+  if (event.target === accountModal) closeAccountModal();
+});
+document.querySelectorAll("[data-account-mode]").forEach((button) => {
+  button.addEventListener("click", () => {
+    accountMode = button.dataset.accountMode;
+    renderAccountMode();
+  });
+});
+accountForm.addEventListener("submit", handleAccountSubmit);
+accountDashboard.addEventListener("click", (event) => {
+  if (event.target.closest("[data-open-account]")) openAccountModal("signup");
+  if (event.target.closest("[data-sign-out]")) {
+    setCurrentEmail("");
+    renderAccountDashboard();
+    showToast("Signed out");
+  }
 });
 quizResult.addEventListener("click", (event) => {
   const button = event.target.closest("[data-add]");
@@ -488,8 +691,7 @@ kitForm.addEventListener("submit", (event) => {
   addCustomKit({
     likes: data.getAll("likes"),
     avoid: data.getAll("avoid"),
-    allergies: data.get("allergies").trim(),
-    notes: data.get("notes").trim()
+    allergies: data.get("allergies").trim()
   });
 });
 document.getElementById("closeKitModal").addEventListener("click", closeKitModal);
@@ -508,3 +710,4 @@ document.getElementById("keepShopping").addEventListener("click", () => {
 promoInput.value = state.promo;
 renderProducts();
 renderCart();
+renderAccountDashboard();
