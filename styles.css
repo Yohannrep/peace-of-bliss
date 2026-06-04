@@ -18,6 +18,7 @@ body {
   color: var(--ink);
   background: linear-gradient(180deg, #fff7e7 0%, #f8eddd 46%, #fffaf1 100%);
   font-family: Inter, Segoe UI, system-ui, sans-serif;
+  overflow-x: hidden;
 }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; }
@@ -345,6 +346,7 @@ h3 { font-size: 1.35rem; }
   padding: 1rem;
   background: var(--paper);
   box-shadow: var(--shadow);
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
 .cart-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .icon-button {
@@ -450,11 +452,149 @@ h3 { font-size: 1.35rem; }
 }
 
 @media (max-width: 760px) {
-  .topbar { align-items: flex-start; flex-direction: column; }
-  nav { justify-content: flex-start; }
-  .cart-button { align-self: stretch; justify-content: center; }
-  .hero { grid-template-columns: 1fr; min-height: auto; }
-  .toolbar { align-items: stretch; flex-direction: column; }
+  .topbar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: .65rem;
+    padding: .7rem .85rem .55rem;
+  }
+  .brand { min-width: 0; }
+  .brand span {
+    width: 2rem;
+    height: 2rem;
+    font-size: .72rem;
+  }
+  nav {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: .25rem;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: .15rem;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    flex: 0 0 auto;
+    padding: .45rem .62rem;
+    font-size: .82rem;
+    background: rgba(255,255,255,.48);
+  }
+  .cart-button {
+    justify-self: end;
+    min-height: 2.25rem;
+    padding: .4rem .55rem;
+    font-size: .85rem;
+  }
+  .cart-button strong {
+    min-width: 1.45rem;
+    height: 1.45rem;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 2rem .95rem 1rem;
+  }
+  .hero-photo {
+    height: 100%;
+    object-position: 58% center;
+  }
+  .hero-shade {
+    background: linear-gradient(180deg, rgba(255,248,234,.98), rgba(255,248,234,.86) 58%, rgba(255,248,234,.64));
+  }
+  h1 { font-size: clamp(3.1rem, 18vw, 4.7rem); }
+  h2 { font-size: clamp(1.85rem, 11vw, 3rem); }
+  .hero-copy p:not(.eyebrow) {
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+  .hero-actions { display: grid; grid-template-columns: 1fr; gap: .55rem; }
+  .hero-card {
+    align-self: auto;
+    padding: .95rem;
+  }
+  .hero-card strong { font-size: 1.1rem; }
+  .perks { padding: 0; }
+  .perks div { min-height: auto; padding: .95rem; }
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 1rem .95rem;
+  }
+  .search input { width: 100%; }
+  .chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: .2rem;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: 0 0 auto; }
+  .section, .quiz, .rituals, .checkout-section {
+    padding: 1.35rem .95rem;
+  }
   .product-grid, .perks, .quiz-options, .ritual-grid, .form-grid { grid-template-columns: 1fr; }
   .product-card { min-height: auto; }
+  .product-art { min-height: 11rem; }
+  .product-art::before {
+    bottom: 6.9rem;
+    width: 2rem;
+    height: 3rem;
+  }
+  .product-jar {
+    width: 8.4rem;
+    height: 7.6rem;
+  }
+  .product-body { padding: .95rem; }
+  .product-body p { margin: .75rem 0; }
+  .product-footer {
+    grid-template-columns: 1fr;
+    gap: .55rem;
+  }
+  .product-button { width: 100%; }
+  .quiz-options button {
+    min-height: 4.25rem;
+    text-align: center;
+  }
+  .quiz-copy, .quiz-result { padding: 1rem; }
+  .ritual-grid article { min-height: auto; }
+  .checkout-copy, .checkout-form {
+    padding: 1rem;
+  }
+  .checkout-form input,
+  .checkout-form select,
+  .checkout-form textarea {
+    font-size: 1rem;
+    min-height: 2.9rem;
+  }
+  .cart-drawer { align-items: stretch; }
+  .cart-panel {
+    width: 100vw;
+    max-width: none;
+  }
+  .cart-item {
+    grid-template-columns: 1fr;
+  }
+  .qty { justify-content: space-between; }
+  .promo span { grid-template-columns: 1fr; }
+  .promo button { min-height: 2.7rem; }
+  .modal-card {
+    padding: 1.35rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .brand { font-size: .95rem; }
+  nav a { font-size: .78rem; }
+  .cart-button { font-size: .8rem; }
+  h1 { font-size: clamp(2.8rem, 17vw, 3.7rem); }
+  .product-meta {
+    flex-direction: column;
+    gap: .2rem;
+  }
+  .scent-list li {
+    font-size: .78rem;
+  }
 }
