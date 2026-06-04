@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Peace Of Bliss Candle Shop</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Peace Of Bliss home">
+      <span>PB</span>
+      Peace Of Bliss
+    </a>
+    <nav aria-label="Main navigation">
+      <a href="#shop">Shop</a>
+      <a href="#quiz">Scent Quiz</a>
+      <a href="#rituals">Rituals</a>
+      <a href="#checkout">Checkout</a>
+    </nav>
+    <button class="cart-button" id="openCart" type="button" aria-label="Open cart">
+      Cart <strong id="cartCount">0</strong>
+    </button>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <img class="hero-photo" src="assets/candle-lab-hero.png" alt="Warm candle making table with wax, oils, and glowing candles">
+      <div class="hero-shade"></div>
+      <div class="hero-copy">
+        <p class="eyebrow">Hand-poured soy blend candles</p>
+        <h1>Peace Of Bliss</h1>
+        <p>Small-batch candles made for cozy rooms, calm routines, and gifts that feel personal.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#shop">Shop candles</a>
+          <a class="button secondary" href="#quiz">Find my scent</a>
+        </div>
+      </div>
+      <aside class="hero-card" aria-label="Current offer">
+        <p>Today only</p>
+        <strong>Free wick trimmer on orders $65+</strong>
+        <span>Use code BLISS10 for 10% off.</span>
+      </aside>
+    </section>
+
+    <section class="perks" aria-label="Store perks">
+      <div><strong>Clean soy blend</strong><span>Smooth burns and warm scent throw.</span></div>
+      <div><strong>Gift ready</strong><span>Add a note and ribbon at checkout.</span></div>
+      <div><strong>Batch tracked</strong><span>Each candle includes pour date details.</span></div>
+      <div><strong>Local pickup</strong><span>Choose shipping or pickup in checkout.</span></div>
+    </section>
+
+    <section class="toolbar" aria-label="Shopping controls">
+      <label class="search">
+        <span>Search candles</span>
+        <input id="searchInput" type="search" placeholder="vanilla, lime, whiskey...">
+      </label>
+      <div class="chips" id="moodFilters" aria-label="Scent filters">
+        <button class="chip active" data-mood="all">All</button>
+        <button class="chip" data-mood="cozy">Cozy</button>
+        <button class="chip" data-mood="bright">Bright</button>
+        <button class="chip" data-mood="fresh">Fresh</button>
+        <button class="chip" data-mood="bold">Bold</button>
+      </div>
+    </section>
+
+    <section class="section" id="shop">
+      <div class="section-head">
+        <p class="eyebrow">Customer favorites</p>
+        <h2>Shop Candles</h2>
+      </div>
+      <div class="product-grid" id="productGrid"></div>
+    </section>
+
+    <section class="quiz" id="quiz">
+      <div class="quiz-copy">
+        <p class="eyebrow">Scent finder</p>
+        <h2>Pick a Mood</h2>
+        <p>Tap the vibe you want and the shop will recommend a candle from the collection.</p>
+      </div>
+      <div class="quiz-options" id="quizOptions">
+        <button type="button" data-quiz="cozy">Movie night</button>
+        <button type="button" data-quiz="bright">Fresh morning</button>
+        <button type="button" data-quiz="fresh">Vacation mode</button>
+        <button type="button" data-quiz="bold">After dark</button>
+      </div>
+      <div class="quiz-result" id="quizResult">
+        <span>Your match</span>
+        <strong>Golden Hour</strong>
+        <p>Warm vanilla woods with a bright floral lift.</p>
+      </div>
+    </section>
+
+    <section class="rituals" id="rituals">
+      <div class="section-head">
+        <p class="eyebrow">Before you burn</p>
+        <h2>Candle Rituals</h2>
+      </div>
+      <div class="ritual-grid">
+        <article><span>01</span><h3>Trim</h3><p>Trim the wick to 1/4 inch before each burn.</p></article>
+        <article><span>02</span><h3>Melt</h3><p>Let the wax pool reach the glass on the first burn.</p></article>
+        <article><span>03</span><h3>Pause</h3><p>Burn for 2-4 hours, then let the jar cool fully.</p></article>
+      </div>
+    </section>
+
+    <section class="checkout-section" id="checkout">
+      <div class="checkout-copy">
+        <p class="eyebrow">Secure demo checkout</p>
+        <h2>Checkout</h2>
+        <p>This storefront saves the cart in your browser and creates a clean order confirmation. Connect a real payment processor later when you are ready to sell live.</p>
+      </div>
+      <form class="checkout-form" id="checkoutForm">
+        <div class="form-grid">
+          <label>First name<input name="firstName" autocomplete="given-name" required></label>
+          <label>Last name<input name="lastName" autocomplete="family-name" required></label>
+          <label>Email<input name="email" type="email" autocomplete="email" required></label>
+          <label>Phone<input name="phone" type="tel" autocomplete="tel" required></label>
+          <label class="wide">Address<input name="address" autocomplete="street-address" required></label>
+          <label>City<input name="city" autocomplete="address-level2" required></label>
+          <label>State<input name="state" autocomplete="address-level1" required></label>
+          <label>ZIP<input name="zip" autocomplete="postal-code" required></label>
+          <label>Delivery
+            <select name="delivery" id="deliverySelect">
+              <option value="shipping">Shipping - $7.95</option>
+              <option value="pickup">Local pickup - free</option>
+            </select>
+          </label>
+          <label class="wide">Gift note<textarea name="giftNote" rows="3" placeholder="Optional note for the box"></textarea></label>
+          <label class="check wide"><input name="giftWrap" type="checkbox"> Add gift wrap for $4.00</label>
+        </div>
+        <button class="button primary wide-button" type="submit">Place demo order</button>
+      </form>
+    </section>
+  </main>
+
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart" aria-hidden="true">
+    <div class="cart-panel">
+      <div class="cart-head">
+        <h2>Your Cart</h2>
+        <button class="icon-button" id="closeCart" type="button" aria-label="Close cart">x</button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <label class="promo">Promo code
+        <span><input id="promoInput" placeholder="BLISS10"><button id="applyPromo" type="button">Apply</button></span>
+      </label>
+      <div class="totals" id="totals"></div>
+      <a class="button primary checkout-link" href="#checkout" id="checkoutLink">Checkout</a>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal" id="orderModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="icon-button modal-close" id="closeModal" type="button" aria-label="Close confirmation">x</button>
+      <p class="eyebrow">Order received</p>
+      <h2>Thank you!</h2>
+      <p id="orderMessage"></p>
+      <button class="button primary" id="keepShopping" type="button">Keep shopping</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
